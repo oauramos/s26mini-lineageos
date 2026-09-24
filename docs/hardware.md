@@ -10,7 +10,7 @@ Read from a running unit (dmesg, `/proc/hw_*_info`, I2C bus, camera HAL, sensor 
 | Board | `d39g_4m_bml_s26ultra_mini_pt` (`alps` = MediaTek reference) |
 | Stock firmware | `VK-D39G-4M-XJ9RQ0C4-3+16-BML-S26 ULTRA Mini-PT-20260227`, MTK `alps-mp-q0.mp1-V9.122.1` |
 | Treble | yes, VNDK 29, dynamic partitions (`super` 4 GiB), A-only, system-as-root GSI format (`arm64_ab` / `bvN`) |
-| USB | VID `0x0E8D` |
+| USB | VID `0x0E8D`. USB-C connector, but **USB 2.0 only and no Type-C CC logic** (see below) |
 
 ## Platform
 
@@ -70,3 +70,12 @@ Li-ion, reports 2946 mAh. MTK `mt-snd-card` codec with ACCDET headset detection.
 | super | 4096 MB | logical: `system`, `vendor` (473 MB), `product` (stock, removed by the installer) |
 | cache | 432 MB | |
 | userdata | ~10 GB | |
+
+## USB-C port quirk
+
+The connector is USB-C, but the board has **no Type-C controller** (no `/sys/class/typec`) and apparently no 5.1 kΩ Rd pull-downs on CC1/CC2. Detection runs on VBUS only (`usb_cable_connected vbus_exist=1`).
+
+- **USB-C ↔ USB-C cables don't work.** A USB-C host or charger only enables VBUS after it sees Rd on CC, and it never sees it here.
+- Use a **USB-A → USB-C** cable (from a USB-A port, or a USB-C-male → USB-A-female adapter on USB-C-only computers).
+- Chargers: use one with a USB-A port.
+- Hardware fix: solder 5.1 kΩ resistors from CC1 and CC2 to GND at the connector.
