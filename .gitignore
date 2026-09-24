@@ -1,0 +1,7 @@
+*.img
+*.img.gz
+*.img.xz
+*.bin
+nv*.img
+proinfo*
+.DS_Store
