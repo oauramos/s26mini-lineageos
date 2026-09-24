@@ -42,6 +42,7 @@ Read from a running unit (dmesg, `/proc/hw_*_info`, I2C bus, camera HAL, sensor 
 | | |
 |---|---|
 | Wi-Fi / BT / GPS / FM | MT6739 integrated CONNSYS (WMT), FM `mt6627` |
+| Wi-Fi bands | 2.4 GHz and **5 GHz** (confirmed by scan) |
 | Modem | `MOLY.LR12A.R3.MP.V123.8`, LTE, dual SIM |
 | NFC | no |
 
