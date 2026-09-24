@@ -13,14 +13,17 @@ DISABLE=(
   com.stevesoltys.seedvault org.lineageos.audiofx
   # media: music, gallery, recorder (the camera stays)
   org.lineageos.eleven org.lineageos.glimpse org.lineageos.recorder
-  # calendar and browser
+  # calendar, and the LineageOS browser (replaced by Firefox/Fennec below)
   org.lineageos.etar org.lineageos.jelly
   # phone and SMS (remove these three lines' packages if you use a SIM for calls)
   com.android.dialer com.android.contacts com.android.messaging
 )
 
 "$HERE/optimize.sh" --disable-apps "${DISABLE[*]}"
-"$HERE/install-apps.sh"
+"$HERE/install-apps.sh" --with-browser
+
+# Firefox (Fennec F-Droid) becomes the default browser
+adb shell cmd role add-role-holder --user 0 android.app.role.BROWSER org.mozilla.fennec_fdroid
 
 echo
-echo "Termux edition ready. Kept: Settings, Launcher, Camera, Clock, Calculator, Files, Keyboard + the app bundle."
+echo "Termux edition ready. Kept: Settings, Launcher, Camera, Clock, Calculator, Files, Keyboard + the app bundle + Firefox (Fennec F-Droid)."

@@ -78,10 +78,12 @@ scripts/profile-termux.sh
 | | Full | Termux edition |
 |---|---|---|
 | Settings, Launcher, Camera, Clock, Calculator, Files, Keyboard | ✅ | ✅ |
-| Browser, Gallery, Music, Recorder, Calendar | ✅ | disabled |
+| LineageOS browser (Jelly) | ✅ | disabled, replaced by Firefox |
+| Gallery, Music, Recorder, Calendar | ✅ | disabled |
 | Phone, Contacts, SMS | ✅ | disabled (edit `profile-termux.sh` if you need calls) |
 | Screensavers, printing, live wallpapers, Seedvault, AudioFX | ✅ | disabled |
 | **App bundle** | ✅ | ✅ |
+| **Firefox** ([Fennec F-Droid](https://f-droid.org/packages/org.mozilla.fennec_fdroid/)), default browser | – | ✅ |
 
 **App bundle** (from the official F-Droid repo, each APK pinned by SHA-256):
 
@@ -89,6 +91,8 @@ scripts/profile-termux.sh
 - [Termux](https://termux.dev): terminal with `ssh`, `sftp`, `scp`, `git`...
 - [LocalSend](https://localsend.org): send files to and from computers and phones on the same network, no internet needed
 - [Material Files](https://github.com/zhanghai/MaterialFiles): file manager with a built-in **SFTP**, SMB, FTP and WebDAV client
+
+The Termux edition also installs **Firefox** as Fennec F-Droid: Firefox built from Mozilla's source by F-Droid, without telemetry. Third-party builds can't use the "Firefox" name, hence the different one.
 
 These builds have no Google services, so Google apps (Maps, Play Store...) won't work.
 
