@@ -14,7 +14,7 @@ The MT6739 BootROM on this board is **unprotected** (SBC, SLA and DAA disabled),
 
 **Enter BROM mode:** phone fully off, hold **Volume Up + Volume Down**, plug the USB cable, keep holding ~5 s. The screen stays black.
 
-**DRAM init needs this board's preloader.** Without it (or with a preloader from another MT6739 board), mtkclient initialises DRAM but fails at DA stage 2 (`Stage was't executed. Maybe dram issue ?`). Dump the preloader from your own phone **before** you need it (needs root, which the TrebleDroid/Lineage userdebug GSIs provide via `adb root`):
+**DRAM init needs a preloader.** With none, or with a preloader from another MT6739 board, mtkclient fails at DA stage 2 (`Stage was't executed. Maybe dram issue ?`). Using this board's own preloader is the expected fix, **but that isn't verified yet**. Please report if it works for you. Dump the preloader from your own phone **before** you need it (needs root, which the TrebleDroid/Lineage userdebug GSIs provide via `adb root`):
 
 ```bash
 adb root
