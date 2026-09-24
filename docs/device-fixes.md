@@ -18,7 +18,7 @@ Status of hardware on replacement GSIs, and the tweaks that fix it. Apply the fi
 | Brightness | ✅ | backlight follows the setting (`/sys/class/leds/lcd-backlight`) |
 | Wi-Fi 2.4 GHz | ✅ | scan OK |
 | Wi-Fi 5 GHz | ✅ | scan sees 5 GHz APs (ch 44, 5220 MHz) |
-| Bluetooth | ✅ with fix | crashes without the fix below; first connection after pairing may fail (see below) |
+| Bluetooth | ✅ with fix | crashes without the fix below; phone-initiated connections to audio devices fail, see below |
 | Sensors (accel, light, proximity) | ✅ | detected |
 | Cameras | ✅ | back + front |
 | Audio | ✅ | |
@@ -45,11 +45,17 @@ adb shell setprop persist.sys.bt.unsupported.commands 182
 
 This needs a TrebleDroid-based GSI (the property comes from TrebleDroid's Bluetooth patches). It persists across reboots.
 
-### Bluetooth: first connection after pairing fails
+### Bluetooth: phone-initiated connections to audio devices fail
 
-Pairing works, but the first A2DP/HFP connection right after pairing times out after 30 s. **Workaround:** power-cycle the accessory once. After that it connects normally.
+Pairing works, but connections **started by the phone** (the first connection after pairing, or tapping "connect") hang in "Connecting" and time out after 30 s. **Workaround:** power-cycle the accessory once after pairing. Connections **started by the accessory** work, and it auto-reconnects normally from then on.
 
-Root cause, seen with QCY H3 earbuds: right after bonding, the stack runs overlapping SDP searches (`SDP already active for peer`). The next SDP query, A2DP's `A2DP_FindService ... SDP search started`, never gets an answer, and both A2DP and HFP hit `CONNECT_TIMEOUT`. The accessory's SDP server stays stuck until it's power-cycled. A real fix would need a Bluetooth stack patch that serialises post-bond SDP.
+Root cause (from HCI snoop + logcat, LineageOS 21 td):
+
+- The outgoing ACL link comes up in the GD layer but never gets registered in the legacy ACL table (`BTM_GetRole: Unable to find active acl`, `bta_av_link_role_ok: Unable to find link role`). On disconnect the legacy stack even treats the handle as ISO (`btm_acl_iso_disconnected ... handle: 0x33`).
+- SDP works (no security needed). AVDTP needs security, goes through the legacy security/L2CAP path, can't find the link (`l2c_link_sec_comp2: L2CAP got sec_comp for unknown BD_ADDR`), and never sends the L2CAP `ConnReq` for PSM 0x19. The accessory drops the idle link after ~20 s (reason 0x13).
+- Tried without effect: `bluetooth.gatt.over_bredr.enabled=false`, `bluetooth.btm.sec.delay_auth_ms.value=1000`.
+
+A real fix needs a Bluetooth stack patch (Android 14 GD/legacy ACL bookkeeping with this MediaTek controller).
 
 ### Google apps
 
