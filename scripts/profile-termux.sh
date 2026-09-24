@@ -20,10 +20,10 @@ DISABLE=(
 )
 
 "$HERE/optimize.sh" --disable-apps "${DISABLE[*]}"
-"$HERE/install-apps.sh" --with-browser
+"$HERE/install-apps.sh" --termux-extras
 
 # Firefox (Fennec F-Droid) becomes the default browser
 adb shell cmd role add-role-holder --user 0 android.app.role.BROWSER org.mozilla.fennec_fdroid
 
 echo
-echo "Termux edition ready. Kept: Settings, Launcher, Camera, Clock, Calculator, Files, Keyboard + the app bundle + Firefox (Fennec F-Droid)."
+echo "Termux edition ready. Kept: Settings, Launcher, Camera, Clock, Calculator, Files, Keyboard + the app bundle + Firefox (Fennec F-Droid) + Primitive FTPd."

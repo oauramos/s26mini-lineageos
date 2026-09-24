@@ -3,9 +3,12 @@
 # Any byte difference aborts the install. Updates come later through the F-Droid app itself.
 #
 # Bundle: F-Droid, Termux, LocalSend (arm64), Material Files (file manager with SFTP/SMB/FTP/WebDAV).
-# --with-browser also installs Fennec F-Droid (Firefox built from Mozilla's source by F-Droid, arm64).
+# --termux-extras (Termux edition) also installs:
+#   Fennec F-Droid (Firefox built from Mozilla's source by F-Droid, arm64)
+#   Primitive FTPd (FTP/SFTP server, to reach the phone's files from a computer)
+# --with-browser is kept as an alias of --termux-extras.
 #
-# Usage: scripts/install-apps.sh [--with-browser]
+# Usage: scripts/install-apps.sh [--termux-extras]
 set -euo pipefail
 
 CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/s26mini-lineageos/apks"
@@ -18,8 +21,11 @@ APPS=(
   "org.localsend.localsend_app_643.apk      82ec3568fba2aa5295b9aae8b76f701d7a4703d86b9f8bad749472038fbaeab3"
   "me.zhanghai.android.files_40.apk         2fe900bf43d725b655008d438f5ca46d0da0f301e3784403b5b96c3fc2df6e8a"
 )
-if [[ "${1:-}" == "--with-browser" ]]; then
-  APPS+=("org.mozilla.fennec_fdroid_1560020.apk    27f2951376ca1085e0933066c902fdfe4d260916d381e233475c5fd6964f5745")
+if [[ "${1:-}" == "--termux-extras" || "${1:-}" == "--with-browser" ]]; then
+  APPS+=(
+    "org.mozilla.fennec_fdroid_1560020.apk    27f2951376ca1085e0933066c902fdfe4d260916d381e233475c5fd6964f5745"
+    "org.primftpd_71.apk                      d36566e774e2d0446dcbb41438d22e62d198688aac2711ba7afaa6ea2fdd577d"
+  )
 fi
 
 sha256() { if command -v sha256sum >/dev/null; then sha256sum "$1" | cut -d' ' -f1; else shasum -a 256 "$1" | cut -d' ' -f1; fi; }

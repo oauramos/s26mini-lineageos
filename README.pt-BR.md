@@ -75,6 +75,7 @@ scripts/profile-termux.sh
 | Protetores de tela, impressão, papéis de parede animados, Seedvault, AudioFX | ✅ | desativados |
 | **Pacote de apps** | ✅ | ✅ |
 | **Firefox** ([Fennec F-Droid](https://f-droid.org/packages/org.mozilla.fennec_fdroid/)), navegador padrão | – | ✅ |
+| **[Primitive FTPd](https://f-droid.org/packages/org.primftpd/)**: servidor FTP/SFTP no celular | – | ✅ |
 
 **Pacote de apps** (do repositório oficial do F-Droid, cada APK conferido por SHA-256):
 
@@ -83,7 +84,7 @@ scripts/profile-termux.sh
 - [LocalSend](https://localsend.org): envia arquivos entre computadores e celulares na mesma rede, sem internet
 - [Material Files](https://github.com/zhanghai/MaterialFiles): gerenciador de arquivos com cliente **SFTP**, SMB, FTP e WebDAV
 
-A versão Termux também instala o **Firefox** como Fennec F-Droid: o Firefox compilado do código-fonte da Mozilla pelo próprio F-Droid, sem telemetria. Builds de terceiros não podem usar o nome "Firefox", por isso o nome diferente.
+A versão Termux também instala o **Primitive FTPd**, um **servidor** FTP/SFTP pra acessar os arquivos do celular a partir do computador (o Material Files faz o contrário: o celular acessando servidores). E instala o **Firefox** como Fennec F-Droid: o Firefox compilado do código-fonte da Mozilla pelo próprio F-Droid, sem telemetria. Builds de terceiros não podem usar o nome "Firefox", por isso o nome diferente.
 
 Essas builds não têm os serviços do Google, então apps do Google (Maps, Play Store...) não funcionam.
 
