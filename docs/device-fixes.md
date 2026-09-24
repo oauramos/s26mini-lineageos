@@ -47,7 +47,9 @@ This needs a TrebleDroid-based GSI (the property comes from TrebleDroid's Blueto
 
 ### Bluetooth: first connection after pairing fails
 
-Pairing works, but the first connection right after pairing may not come up. Power-cycle the accessory (headphones, speaker...) once. After that it connects normally.
+Pairing works, but the first A2DP/HFP connection right after pairing times out after 30 s. **Workaround:** power-cycle the accessory once. After that it connects normally.
+
+Root cause, seen with QCY H3 earbuds: right after bonding, the stack runs overlapping SDP searches (`SDP already active for peer`). The next SDP query, A2DP's `A2DP_FindService ... SDP search started`, never gets an answer, and both A2DP and HFP hit `CONNECT_TIMEOUT`. The accessory's SDP server stays stuck until it's power-cycled. A real fix would need a Bluetooth stack patch that serialises post-bond SDP.
 
 ### Google apps
 
