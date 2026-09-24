@@ -48,9 +48,45 @@ Tem que aparecer `d39g_4m_bml_s26ultra_mini_pt`. Outros aparelhos vendidos com o
 
 O primeiro boot demora alguns minutos. O aviso de "orange state" em todo boot é normal com o bootloader desbloqueado.
 
-### Depois de instalar
+### Depois do primeiro boot: escolha a versão
 
-- Depois do primeiro boot, ative a depuração USB de novo e rode `scripts/post-install.sh`. Ele aplica as correções do aparelho (o Bluetooth não liga no Android 14+ sem elas). Opcional: `scripts/optimize.sh` deixa o sistema mais leve e rápido.
+Ative a depuração USB de novo e rode **uma** das duas opções.
+
+**Opção 1: LineageOS completo.** Todos os apps do LineageOS (navegador, galeria, música, agenda, telefone, SMS...) mais o pacote de apps.
+
+```bash
+scripts/post-install.sh
+scripts/install-apps.sh
+```
+
+**Opção 2: Versão Termux.** Sistema enxuto pra usar o celular como terminal SSH. Desativa os apps sem uso (dá pra reverter), acelera as animações, ajusta a densidade pra 160 dpi, pré-compila os apps e instala o pacote. No aparelho testado, a RAM livre foi de ~1,3 GB pra ~1,9 GB.
+
+```bash
+scripts/post-install.sh
+scripts/profile-termux.sh
+```
+
+| | Completo | Versão Termux |
+|---|---|---|
+| Configurações, Launcher, Câmera, Relógio, Calculadora, Arquivos, Teclado | ✅ | ✅ |
+| Navegador, Galeria, Música, Gravador, Agenda | ✅ | desativados |
+| Telefone, Contatos, SMS | ✅ | desativados (edite o `profile-termux.sh` se for fazer ligações) |
+| Protetores de tela, impressão, papéis de parede animados, Seedvault, AudioFX | ✅ | desativados |
+| **Pacote de apps** | ✅ | ✅ |
+
+**Pacote de apps** (do repositório oficial do F-Droid, cada APK conferido por SHA-256):
+
+- [F-Droid](https://f-droid.org): loja de apps open source, mantém os apps abaixo atualizados
+- [Termux](https://termux.dev): terminal com `ssh`, `sftp`, `scp`, `git`...
+- [LocalSend](https://localsend.org): envia arquivos entre computadores e celulares na mesma rede, sem internet
+- [Material Files](https://github.com/zhanghai/MaterialFiles): gerenciador de arquivos com cliente **SFTP**, SMB, FTP e WebDAV
+
+Essas builds não têm os serviços do Google, então apps do Google (Maps, Play Store...) não funcionam.
+
+Pra reativar algo que a versão Termux desativou: `adb shell pm enable <pacote>`.
+
+### Também
+
 - **Faça backup das partições de calibração** (IMEI, MAC, calibração de rádio) e do preloader: [docs/recovery.md](docs/recovery.md).
 - **Desligue a Depuração USB** no final.
 - O vendor, o kernel e o modem continuam sendo os de fábrica. Trate o aparelho como **semi-confiável**: nada de conta Google principal nem app de banco.

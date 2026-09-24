@@ -57,9 +57,45 @@ The script:
 
 The first boot takes a few minutes. The phone shows an "orange state" warning on every boot. That's expected with an unlocked bootloader.
 
-### After installing
+### After the first boot: pick an edition
 
-- Once it has booted, enable USB debugging again and run `scripts/post-install.sh`. It applies the device fixes (Bluetooth crash loop on Android 14+). Optional: `scripts/optimize.sh` for a lighter, snappier system.
+Enable USB debugging again, then run **one** of the two options.
+
+**Option 1: Full LineageOS.** All LineageOS apps (browser, gallery, music, calendar, phone, SMS...) plus the app bundle.
+
+```bash
+scripts/post-install.sh
+scripts/install-apps.sh
+```
+
+**Option 2: Termux edition.** A lean system for using the phone as an SSH/terminal device. Unused apps are disabled (reversible), animations sped up, density 160 dpi, apps precompiled, plus the app bundle. On the tested unit, free RAM went from ~1.3 GB to ~1.9 GB.
+
+```bash
+scripts/post-install.sh
+scripts/profile-termux.sh
+```
+
+| | Full | Termux edition |
+|---|---|---|
+| Settings, Launcher, Camera, Clock, Calculator, Files, Keyboard | ✅ | ✅ |
+| Browser, Gallery, Music, Recorder, Calendar | ✅ | disabled |
+| Phone, Contacts, SMS | ✅ | disabled (edit `profile-termux.sh` if you need calls) |
+| Screensavers, printing, live wallpapers, Seedvault, AudioFX | ✅ | disabled |
+| **App bundle** | ✅ | ✅ |
+
+**App bundle** (from the official F-Droid repo, each APK pinned by SHA-256):
+
+- [F-Droid](https://f-droid.org): open-source app store, keeps the apps below updated
+- [Termux](https://termux.dev): terminal with `ssh`, `sftp`, `scp`, `git`...
+- [LocalSend](https://localsend.org): send files to and from computers and phones on the same network, no internet needed
+- [Material Files](https://github.com/zhanghai/MaterialFiles): file manager with a built-in **SFTP**, SMB, FTP and WebDAV client
+
+These builds have no Google services, so Google apps (Maps, Play Store...) won't work.
+
+Re-enable anything the Termux edition disabled: `adb shell pm enable <package>`.
+
+### Also
+
 - **Back up your calibration partitions** (IMEI, Wi-Fi/BT MAC, radio calibration) and dump the preloader. You'll need both if something breaks: [docs/recovery.md](docs/recovery.md).
 - Turn **USB debugging off** when you're done. The GSIs are `userdebug` builds, which allow root over ADB.
 - Hardware status and fixes: [docs/device-fixes.md](docs/device-fixes.md).
