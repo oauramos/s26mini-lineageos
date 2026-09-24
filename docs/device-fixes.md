@@ -18,12 +18,12 @@ Status of hardware on replacement GSIs, and the tweaks that fix it. Apply the fi
 | Brightness | ✅ | backlight follows the setting (`/sys/class/leds/lcd-backlight`) |
 | Wi-Fi 2.4 GHz | ✅ | scan OK |
 | Wi-Fi 5 GHz | ✅ | scan sees 5 GHz APs (ch 44, 5220 MHz) |
-| Bluetooth | ✅ with fix | crashes without the fix below |
+| Bluetooth | ✅ with fix | crashes without the fix below; first connection after pairing may fail (see below) |
 | Sensors (accel, light, proximity) | ✅ | detected |
-| Cameras | ✅ detected | back + front exposed by the HAL; image quality untested |
-| Audio | ⏳ | HAL output thread up; speaker/earpiece/headset untested |
-| GPS | ⏳ | provider enabled; fix untested |
-| Mobile data / calls / SMS | ⏳ | RIL running, modem detected; needs a SIM |
+| Cameras | ✅ | back + front |
+| Audio | ✅ | |
+| GPS | ✅ | no Google A-GPS on vanilla builds, first fix can take a few minutes. Test with GPSTest (F-Droid) |
+| Mobile data / calls / SMS | ✅ | |
 | Battery / charging | ✅ | reported correctly |
 
 ## Fixes
@@ -44,6 +44,14 @@ adb shell setprop persist.sys.bt.unsupported.commands 182
 ```
 
 This needs a TrebleDroid-based GSI (the property comes from TrebleDroid's Bluetooth patches). It persists across reboots.
+
+### Bluetooth: first connection after pairing fails
+
+Pairing works, but the first connection right after pairing may not come up. Power-cycle the accessory (headphones, speaker...) once. After that it connects normally.
+
+### Google apps
+
+Vanilla (`bvN`) builds have no Google Play Services, so Google Maps and other Google apps won't run. Use F-Droid apps (Organic Maps, OsmAnd), or flash the `bgN` (GApps) variant if you need them.
 
 ### Screen density
 
