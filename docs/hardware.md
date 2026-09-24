@@ -77,5 +77,5 @@ The connector is USB-C, but the board has **no Type-C controller** (no `/sys/cla
 
 - **USB-C ↔ USB-C cables don't work.** A USB-C host or charger only enables VBUS after it sees Rd on CC, and it never sees it here.
 - Use a **USB-A → USB-C** cable (from a USB-A port, or a USB-C-male → USB-A-female adapter on USB-C-only computers).
-- Chargers: use one with a USB-A port.
+- Chargers: **USB-C chargers with a C↔C cable do not charge it** (confirmed). Use a USB-A charger, like the one in the box, with an A→C cable.
 - Hardware fix: solder 5.1 kΩ resistors from CC1 and CC2 to GND at the connector.
