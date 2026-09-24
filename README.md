@@ -59,7 +59,7 @@ The first boot takes a few minutes. The phone shows an "orange state" warning on
 
 ### After installing
 
-- Once it has booted, enable USB debugging again and run `scripts/post-install.sh`. It applies the device fixes (Bluetooth crash loop on Android 14+).
+- Once it has booted, enable USB debugging again and run `scripts/post-install.sh`. It applies the device fixes (Bluetooth crash loop on Android 14+). Optional: `scripts/optimize.sh` for a lighter, snappier system.
 - **Back up your calibration partitions** (IMEI, Wi-Fi/BT MAC, radio calibration) and dump the preloader. You'll need both if something breaks: [docs/recovery.md](docs/recovery.md).
 - Turn **USB debugging off** when you're done. The GSIs are `userdebug` builds, which allow root over ADB.
 - Hardware status and fixes: [docs/device-fixes.md](docs/device-fixes.md).

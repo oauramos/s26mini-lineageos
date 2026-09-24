@@ -43,7 +43,9 @@ The MT6739 controller advertises `READ_DEFAULT_ERRONEOUS_DATA_REPORTING` as supp
 adb shell setprop persist.sys.bt.unsupported.commands 182
 ```
 
-This needs a TrebleDroid-based GSI (the property comes from TrebleDroid's Bluetooth patches). It persists across reboots.
+This needs a TrebleDroid-based GSI (the property comes from TrebleDroid's Bluetooth patches).
+
+**Make it stick:** setting the property alone gets undone. On every boot, TrebleApp (`me.phh.treble.app`) rewrites `persist.sys.bt.unsupported.*` from its own *Misc → Bluetooth workarounds* setting (default `none` = empty), and it races with the Bluetooth start. Set that option to **Mediatek**, which writes the same `182`. `scripts/post-install.sh` does this for you.
 
 ### Bluetooth: phone-initiated connections to audio devices fail
 
@@ -61,6 +63,10 @@ A real fix needs a Bluetooth stack patch (Android 14 GD/legacy ACL bookkeeping w
 
 Vanilla (`bvN`) builds have no Google Play Services, so Google Maps and other Google apps won't run. Use F-Droid apps (Organic Maps, OsmAnd), or flash the `bgN` (GApps) variant if you need them.
 
-### Screen density
+## Optimisation (optional)
 
-The panel is 384×854 and the GSI defaults to 190 dpi. If the UI looks cramped, try `adb shell wm density 160`.
+`scripts/optimize.sh` applies reversible tweaks: animations at 0.5×, density 160 dpi (190 is oversized on a 384×854 panel), disables the finished setup wizard, and runs `bg-dexopt`. With `--disable-apps "pkg ..."` it also disables apps you don't use.
+
+On the tested unit, with 18 unused apps disabled (screensavers, printing, Seedvault, AudioFX, Eleven, Glimpse, Recorder, Etar, Jelly, Dialer, Contacts, Messaging), free RAM after boot went from ~1.29 GB to **~1.92 GB**.
+
+Undo: `adb shell pm enable <pkg>`, `adb shell wm density reset`, `adb shell settings put global animator_duration_scale 1` (same for `window_` and `transition_animation_scale`).

@@ -50,7 +50,7 @@ O primeiro boot demora alguns minutos. O aviso de "orange state" em todo boot é
 
 ### Depois de instalar
 
-- Depois do primeiro boot, ative a depuração USB de novo e rode `scripts/post-install.sh`. Ele aplica as correções do aparelho (o Bluetooth não liga no Android 14+ sem elas).
+- Depois do primeiro boot, ative a depuração USB de novo e rode `scripts/post-install.sh`. Ele aplica as correções do aparelho (o Bluetooth não liga no Android 14+ sem elas). Opcional: `scripts/optimize.sh` deixa o sistema mais leve e rápido.
 - **Faça backup das partições de calibração** (IMEI, MAC, calibração de rádio) e do preloader: [docs/recovery.md](docs/recovery.md).
 - **Desligue a Depuração USB** no final.
 - O vendor, o kernel e o modem continuam sendo os de fábrica. Trate o aparelho como **semi-confiável**: nada de conta Google principal nem app de banco.
