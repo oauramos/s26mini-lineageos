@@ -1,0 +1,67 @@
+name: installer
+
+# Builds the one-file installer for macOS, Windows and Linux.
+# Tag push (v*): publishes the files to that GitHub release.
+# Manual run: builds and keeps them as workflow artifacts only.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version-file: installer/go.mod }
+      - run: go vet ./... && go test ./...
+        working-directory: installer
+
+  build:
+    needs: test
+    runs-on: macos-latest # lipo for the universal macOS binary; cross-compiles the rest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version-file: installer/go.mod }
+      - name: Build
+        working-directory: installer
+        env:
+          VERSION: ${{ github.ref_type == 'tag' && github.ref_name || format('dev-{0}', github.sha) }}
+        run: |
+          set -euo pipefail
+          mkdir -p ../dist tmp
+          export CGO_ENABLED=0
+          b() { GOOS=$1 GOARCH=$2 go build -trimpath -ldflags "-s -w -X main.version=$VERSION" -o "$3" .; }
+
+          b darwin arm64 tmp/mac-arm64
+          b darwin amd64 tmp/mac-amd64
+          mkdir -p tmp/mac
+          lipo -create -output tmp/mac/S26mini-Installer tmp/mac-arm64 tmp/mac-amd64
+          codesign --force --sign - tmp/mac/S26mini-Installer
+          ditto -c -k tmp/mac ../dist/s26mini-installer-macos.zip
+
+          b windows amd64 ../dist/s26mini-installer-windows.exe
+
+          for arch in amd64 arm64; do
+            mkdir -p tmp/linux-$arch
+            b linux $arch tmp/linux-$arch/s26mini-installer
+            tar -C tmp/linux-$arch -czf ../dist/s26mini-installer-linux-$arch.tar.gz s26mini-installer
+          done
+
+          cd ../dist && shasum -a 256 * > SHA256SUMS.txt && cat SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: s26mini-installer
+          path: dist/*
+      - name: Attach to release
+        if: github.ref_type == 'tag'
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 \
+            || gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "See the README for how to run the installer."
+          gh release upload "$GITHUB_REF_NAME" dist/* --clobber
