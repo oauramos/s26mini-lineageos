@@ -13,17 +13,19 @@ adb wait-for-device
 # which the MT6739 controller advertises but rejects -> the BT process aborts in a loop.
 # TrebleApp's "Bluetooth workaround = mediatek" masks it (persist.sys.bt.unsupported.commands=182).
 # Setting only the property is not enough: TrebleApp rewrites it on every boot from its own setting.
-PREFS=/data/data/me.phh.treble.app/shared_prefs/me.phh.treble.app_preferences.xml
+APP=/data/data/me.phh.treble.app
+PREFS=$APP/shared_prefs/me.phh.treble.app_preferences.xml
 adb shell am force-stop me.phh.treble.app
-if adb shell "[ -f $PREFS ]"; then
-  if ! adb shell "grep -q key_misc_bluetooth $PREFS"; then
-    adb shell "sed -i 's#</map>#    <string name=\"key_misc_bluetooth\">mediatek</string>\n</map>#' $PREFS"
-  else
-    adb shell "sed -i 's#<string name=\"key_misc_bluetooth\">[^<]*</string>#<string name=\"key_misc_bluetooth\">mediatek</string>#' $PREFS"
-  fi
+if adb shell "grep -q key_misc_bluetooth $PREFS" 2>/dev/null; then
+  adb shell "sed -i 's#<string name=\"key_misc_bluetooth\">[^<]*</string>#<string name=\"key_misc_bluetooth\">mediatek</string>#' $PREFS"
+elif adb shell "[ -f $PREFS ]"; then
+  adb shell "sed -i 's#</map>#    <string name=\"key_misc_bluetooth\">mediatek</string>\n</map>#' $PREFS"
 else
-  echo "TrebleApp prefs not found. Open Phh Treble Settings > Misc > Bluetooth workarounds > Mediatek by hand."
+  # Fresh install: TrebleApp hasn't created its prefs yet, so create them owned by the app.
+  adb shell "u=\$(stat -c %u $APP) && mkdir -p $APP/shared_prefs && printf '<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>\n<map>\n    <string name=\"key_misc_bluetooth\">mediatek</string>\n</map>\n' > $PREFS && chown -R \$u:\$u $APP/shared_prefs && chmod 771 $APP/shared_prefs && chmod 660 $PREFS && restorecon -R $APP/shared_prefs"
 fi
+adb shell "grep -q '\"key_misc_bluetooth\">mediatek<' $PREFS" \
+  || echo "Could not save TrebleApp's setting. Open Phh Treble Settings > Misc > Bluetooth workarounds > Mediatek by hand."
 adb shell setprop persist.sys.bt.unsupported.commands 182
 
 adb shell cmd bluetooth_manager disable >/dev/null 2>&1 || true
