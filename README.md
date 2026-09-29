@@ -1,185 +1,71 @@
-<h1 align="center">s26mini-lineageos</h1>
-
 <p align="center">
-  <b>Remove the factory backdoor from the fake "S26 ULTRA Mini" and run LineageOS 21 on it.</b>
+  <img src="docs/banner.svg" alt="S26 Mini · LineageOS: remove the factory backdoor in a few clicks" width="100%">
 </p>
 
 <p align="center">
-  <a href="https://github.com/oauramos/s26mini-lineageos/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/oauramos/s26mini-lineageos"></a>
+  <a href="https://github.com/oauramos/s26mini-lineageos/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/oauramos/s26mini-lineageos?label=installer"></a>
+  <img alt="macOS" src="https://img.shields.io/badge/macOS-tested-000?logo=apple&logoColor=white">
+  <img alt="Windows" src="https://img.shields.io/badge/Windows-experimental-0078D4?logo=windows&logoColor=white">
+  <img alt="Linux" src="https://img.shields.io/badge/Linux-experimental-FCC624?logo=linux&logoColor=black">
+  <br>
+  <img alt="LineageOS 21" src="https://img.shields.io/badge/LineageOS-21-167C80?logo=lineageos&logoColor=white">
+  <img alt="Android 14" src="https://img.shields.io/badge/Android-14-3DDC84?logo=android&logoColor=white">
+  <img alt="Security patch" src="https://img.shields.io/badge/patch-2026--09--01-2fd6b5">
+  <img alt="Go" src="https://img.shields.io/badge/Go-installer-00ADD8?logo=go&logoColor=white">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/github/license/oauramos/s26mini-lineageos"></a>
-  <a href="https://github.com/oauramos/s26mini-lineageos/wiki"><img alt="Wiki" src="https://img.shields.io/badge/docs-wiki-blue"></a>
 </p>
 
 <p align="center">
-  🇧🇷 <a href="README.pt-BR.md"><b>Leia em português</b></a>
+  🇧🇷 <a href="README.pt-BR.md"><b>Leia em português</b></a> · 📖 <a href="https://github.com/oauramos/s26mini-lineageos/wiki"><b>Wiki</b></a>
 </p>
 
 ---
 
-A cheap **"Samsung S26 ULTRA Mini"** is sold all over Brazil. It isn't a Samsung: it's a generic **MediaTek MT6739** board whose firmware ships, **straight out of a sealed box**, with:
+The cheap **"Samsung S26 ULTRA Mini"** sold across Brazil isn't a Samsung. Its factory firmware ships with a **hidden code loader that can inject code into every app**, tools that **rewrite the IMEI**, and a **faked security patch** ([analysis](https://github.com/oauramos/s26mini-lineageos/wiki/Stock-Firmware-Analysis)).
 
-- a **code loader hidden in Android's core runtime** that can inject code into every app on the phone (banking, WhatsApp, browser)
-- privileged tools that **rewrite the IMEI** and fake the phone's specs
-- a **faked security patch** (claims 2026, really 2020)
-- a Chinese "system update" service running permanently as the system user
+**This installer replaces the whole system with a clean LineageOS 21** (Android 14, September 2026 patches). You plug the phone in, answer three questions and wait.
 
-This project **replaces the whole system** with **LineageOS 21** (Android 14, September 2026 security patches). Everything above lives in `/system`, so it goes away.
+## Install in 3 steps
 
-| | Stock | With this project |
-|---|---|---|
-| OS | Android 10 Go, disguised | **LineageOS 21** (Android 14) |
-| Security patch | claims 2026-01, really 2020-08 | **2026-09-01** |
-| Backdoor loader, IMEI tools, FOTA | present | **gone** |
+**1. Download the installer**
 
-Full analysis with indicators: [Stock Firmware Analysis](https://github.com/oauramos/s26mini-lineageos/wiki/Stock-Firmware-Analysis) · [docs/backdoor-analysis.md](docs/backdoor-analysis.md)
+| macOS (Intel + Apple Silicon) | Windows | Linux |
+|:---:|:---:|:---:|
+| [**s26mini-installer-macos.zip**](https://github.com/oauramos/s26mini-lineageos/releases/latest/download/s26mini-installer-macos.zip) | [**s26mini-installer-windows.exe**](https://github.com/oauramos/s26mini-lineageos/releases/latest/download/s26mini-installer-windows.exe) | [**x86_64**](https://github.com/oauramos/s26mini-lineageos/releases/latest/download/s26mini-installer-linux-amd64.tar.gz) · [**arm64**](https://github.com/oauramos/s26mini-lineageos/releases/latest/download/s26mini-installer-linux-arm64.tar.gz) |
 
-> ⚠️ **This erases everything on the phone** and unlocks the bootloader. Only tested on board `d39g_4m_bml_s26ultra_mini_pt`. You do this at your own risk.
->
-> 🚫 This project does **not** provide or support changing IMEIs. Doing so is a crime in Brazil. The clean system removes the IMEI tools that came with the phone.
+**2. On the phone**, turn on developer mode: Settings → About phone → tap **Build number** 7×. Then Settings → System → Developer options → turn on **OEM unlocking** and **USB debugging**.
 
-## Quick start
+**3. Plug the phone in with a USB-A → USB-C cable and run the installer.** It downloads everything, checks every file's SHA-256, and tells you when to tap something on the phone.
 
-```bash
-git clone https://github.com/oauramos/s26mini-lineageos && cd s26mini-lineageos
-scripts/flash-gsi.sh lineage-21.0-<date>-UNOFFICIAL-arm64_bvN.img   # wipes + installs
-scripts/post-install.sh                                              # device fixes
-scripts/profile-termux.sh    # Termux edition  (or: scripts/install-apps.sh for Full)
-```
+> [!IMPORTANT]
+> **USB-C ↔ USB-C cables don't work** with this phone. Use USB-A → USB-C (an adapter on the computer side is fine).
 
-Step-by-step, with troubleshooting: [Installation Guide](https://github.com/oauramos/s26mini-lineageos/wiki/Installation-Guide).
+> [!NOTE]
+> **"Unidentified developer"?** The installer isn't signed with a paid certificate yet.
+> **macOS:** right-click the file → **Open** → **Open** (or System Settings → Privacy & Security → **Open Anyway**).
+> **Windows:** **More info** → **Run anyway**.
+> **Linux:** `tar xzf s26mini-installer-linux-*.tar.gz && ./s26mini-installer`
 
-## Is my phone this model?
+## You choose
 
-Enable USB debugging and run:
+| | Without Google *(recommended)* | With Google Play |
+|---|:---:|:---:|
+| Play Store and Google services | – | ✅ |
+| Privacy, free RAM | ✅ best | good |
+| **App bundle**: F-Droid, Termux, LocalSend, Files, Firefox, FTP server | ✅ default | optional |
+| **Aurora Store** (Play Store apps, no Google account) | optional | – |
 
-```bash
-adb shell getprop ro.product.vendor.device
-```
+Every choice also gets the device fixes (Bluetooth, front-camera area) and an automatic **backup of your IMEI/calibration** to the computer.
 
-It should print `d39g_4m_bml_s26ultra_mini_pt`. Other boards sold under the same name may differ. The installer warns you and asks before continuing.
+> [!WARNING]
+> **This erases everything on the phone.** Tested on board `d39g_4m_bml_s26ultra_mini_pt`; the installer checks it and warns you on anything else. At your own risk.
+> Vendor, kernel and modem are still the manufacturer's: treat the phone as **semi-trusted** (no main Google account, no banking apps).
+> This project does **not** change IMEIs. Doing so is a crime in Brazil.
 
-## What you need
+## Want more?
 
-- A computer with `adb`, `fastboot`, `python3` and `curl` (Linux or macOS; Windows via WSL untested)
-- A **USB-A → USB-C** cable. **USB-C ↔ USB-C doesn't work** on this phone, for data or charging (the board lacks the Type-C CC resistors). On USB-C-only computers, use a single C-to-A adapter, not a hub.
-- A GSI image, **arm64, A/B (system-as-root), vanilla**:
-  - **Recommended:** LineageOS 21 by AndyYan, file `...-arm64_bvN.img.gz`: <https://sourceforge.net/projects/andyyan-gsi/files/lineage-21-pre-qpr2-td/> (slow download? add `?use_mirror=cfhcable` to the URL)
-    - Want Google Play? Take `...-arm64_bgN-signed.img.gz` from the same folder instead. See [Google Play (optional)](#google-play-optional).
-  - Alternative: TrebleDroid `system-td-arm64-ab-vanilla.img.xz`: <https://github.com/TrebleDroid/treble_experimentations/releases> (`ci-20240226` = Android 14, `ci-20230905` = Android 13)
-  - Avoid EROFS builds and GSIs that require Android 11+ vendors. This phone has an Android 10 vendor (VNDK 29) and kernel 4.14.
+Manual install with scripts, the Termux edition, hardware details, recovery from a brick: everything is in the **[wiki](https://github.com/oauramos/s26mini-lineageos/wiki)**.
 
-## Install
+[Installation Guide](https://github.com/oauramos/s26mini-lineageos/wiki/Installation-Guide) · [Editions and Apps](https://github.com/oauramos/s26mini-lineageos/wiki/Editions-and-Apps) · [Known Issues](https://github.com/oauramos/s26mini-lineageos/wiki/Device-Fixes-and-Known-Issues) · [Recovery](https://github.com/oauramos/s26mini-lineageos/wiki/Recovery-and-Backups) · [Security Model](https://github.com/oauramos/s26mini-lineageos/wiki/Security-Model) · [FAQ](https://github.com/oauramos/s26mini-lineageos/wiki/FAQ)
 
-1. **On the phone:** Settings → About phone → tap **Build number** 7×. Then Developer options → enable **OEM unlocking** and **USB debugging**.
-2. Plug it in, accept the "Allow USB debugging?" prompt.
-3. Decompress the GSI (`gunzip file.img.gz` or `xz -d file.img.xz`).
-4. Run `scripts/flash-gsi.sh path/to/system.img`.
-5. When the phone shows the unlock warning, press **Volume Up** to confirm.
-
-The script checks the board and OEM unlock, unlocks the bootloader (**wipes the phone**), disables AVB with a generated vbmeta ([tools/make_vbmeta_disabled.py](tools/make_vbmeta_disabled.py)), deletes the stock `product` partition, flashes the GSI and wipes userdata.
-
-The first boot takes a few minutes. The "orange state" warning on every boot is expected with an unlocked bootloader.
-
-## Pick an edition
-
-After the first boot, enable USB debugging again and run `scripts/post-install.sh` (fixes the Bluetooth crash loop), then **one** of:
-
-| | **Full** | **Termux edition** |
-|---|---|---|
-| Command | `scripts/install-apps.sh` | `scripts/profile-termux.sh` |
-| For | a regular phone | a dedicated SSH/terminal device |
-| Settings, Launcher, Camera, Clock, Calculator, Files, Keyboard | ✅ | ✅ |
-| LineageOS browser (Jelly) | ✅ | replaced by Firefox |
-| Gallery, Music, Recorder, Calendar | ✅ | disabled |
-| Phone, Contacts, SMS | ✅ | disabled (edit `profile-termux.sh` if you need calls) |
-| Screensavers, printing, live wallpapers, Seedvault, AudioFX | ✅ | disabled |
-| Animations 0.5×, 160 dpi, apps precompiled | – | ✅ |
-| **App bundle** (below) | ✅ | ✅ |
-| **[Firefox](https://f-droid.org/packages/org.mozilla.fennec_fdroid/)** (Fennec F-Droid), default browser | – | ✅ |
-| **[Primitive FTPd](https://f-droid.org/packages/org.primftpd/)**: FTP/SFTP server on the phone | – | ✅ |
-| Free RAM (tested) | ~1.3 GB | **~1.9 GB** |
-
-**App bundle**, from the official F-Droid repo with each APK pinned by SHA-256:
-
-- [F-Droid](https://f-droid.org): open-source app store, keeps everything here updated
-- [Termux](https://termux.dev): terminal with `ssh`, `sftp`, `scp`, `git`...
-- [LocalSend](https://localsend.org): send files between computers and phones on the same network, no internet needed
-- [Material Files](https://github.com/zhanghai/MaterialFiles): file manager with a built-in **SFTP**, SMB, FTP and WebDAV client (the phone reaching servers)
-
-**Primitive FTPd** is the other direction: an SFTP/FTP server so a computer can reach the phone's files. **Fennec F-Droid** is Firefox built from Mozilla's source by F-Droid, without telemetry. Third-party builds can't use the "Firefox" name.
-
-Disabled apps aren't removed: `adb shell pm enable <package>` brings any of them back.
-
-### Google Play (optional)
-
-The recommended image has no Google services. If you need apps from the Play Store, there are two ways, and both work with either edition:
-
-| | **Aurora Store** | **Google image (`bgN`)** |
-|---|---|---|
-| How | add `--aurora` to `install-apps.sh` or `profile-termux.sh` | flash `...-arm64_bgN-signed.img` instead of `bvN` (wipes the phone) |
-| What you get | anonymous Play Store client from F-Droid, APK pinned by SHA-256 | the real Play Store and Play Services |
-| Google account | not needed | needed |
-| Apps that rely on Play Services (push notifications, Google sign-in, Maps) | limited | work |
-| Banking, streaming DRM (Play Integrity) | no | no, this GSI isn't certified |
-| RAM | unchanged | Play Services stays resident; ~1.4 GB available after setup (tested) |
-
-Aurora covers most "I need app X that isn't on F-Droid" cases. Pick the Google image only if you need Play Services.
-
-With the Google image, Google blocks the Play Store on uncertified devices until you register the phone. Get its GSF ID (`adb root`, then `adb shell "sqlite3 /data/data/com.google.android.gsf/databases/gservices.db \"select value from main where name='android_id';\""`), register it at <https://www.google.com/android/uncertified>, wait a few minutes and clear the Play Store's data. Remember the [security model](#what-stays-untrusted): use a secondary Google account, not your main one.
-
-Full app list with versions and hashes: [Editions and Apps](https://github.com/oauramos/s26mini-lineageos/wiki/Editions-and-Apps).
-
-## What works
-
-| Works | Notes |
-|---|---|
-| Display, touch, brightness, Wi-Fi 2.4 + 5 GHz, calls, mobile data, SMS, cameras, audio, GPS, sensors, battery | GPS has no Google A-GPS, so the first fix is slower |
-| Bluetooth | needs `post-install.sh` |
-
-**Known issues:**
-
-- **Bluetooth headphones pair but don't connect** when the phone starts the connection. Power-cycle the accessory once after pairing, and it reconnects by itself from then on. [Bluetooth Deep Dive](https://github.com/oauramos/s26mini-lineageos/wiki/Bluetooth-Deep-Dive)
-- **USB-C ↔ USB-C** doesn't work. Use USB-A → C.
-
-Details: [Device Fixes and Known Issues](https://github.com/oauramos/s26mini-lineageos/wiki/Device-Fixes-and-Known-Issues).
-
-## After installing
-
-- **Back up your calibration partitions** (IMEI, MAC, radio calibration) and the preloader: [Recovery and Backups](https://github.com/oauramos/s26mini-lineageos/wiki/Recovery-and-Backups).
-- Open **F-Droid** once so it refreshes and offers updates.
-- Turn **USB debugging off**. The GSIs are `userdebug` builds, which allow root over ADB.
-
-## What stays untrusted
-
-Vendor, kernel, bootloader and modem firmware are still the manufacturer's, and nothing replaces them (the kernel source was never published). No backdoor indicators were found in `vendor`, but treat the phone as **semi-trusted**: no main Google account, no banking apps. [Security Model](https://github.com/oauramos/s26mini-lineageos/wiki/Security-Model)
-
-## Documentation
-
-The **[wiki](https://github.com/oauramos/s26mini-lineageos/wiki)** has the full story:
-
-| | |
-|---|---|
-| [Hardware](https://github.com/oauramos/s26mini-lineageos/wiki/Hardware) | real SoC, panel, cameras, I2C map, partitions, USB-C quirk |
-| [Stock Firmware Analysis](https://github.com/oauramos/s26mini-lineageos/wiki/Stock-Firmware-Analysis) | the backdoor, IMEI tools, fake specs, IOCs |
-| [Design Decisions](https://github.com/oauramos/s26mini-lineageos/wiki/Design-Decisions) | why a GSI, why LineageOS 21, why these apps... |
-| [Installation Guide](https://github.com/oauramos/s26mini-lineageos/wiki/Installation-Guide) | step-by-step and troubleshooting |
-| [Editions and Apps](https://github.com/oauramos/s26mini-lineageos/wiki/Editions-and-Apps) | every kept, disabled and added app |
-| [Recovery and Backups](https://github.com/oauramos/s26mini-lineageos/wiki/Recovery-and-Backups) | BROM/mtkclient, calibration |
-| [Security Model](https://github.com/oauramos/s26mini-lineageos/wiki/Security-Model) | what to trust, SSH hardening |
-| [FAQ](https://github.com/oauramos/s26mini-lineageos/wiki/FAQ) | quick answers |
-
-The same material lives in [`docs/`](docs/) for offline reading.
-
-## Contributing
-
-Tested another GSI or another board sold as "S26 ULTRA Mini"? Open an issue with the output of:
-
-```bash
-adb shell getprop | grep -E 'ro.product.vendor.device|ro.build.display.id|ro.vendor.build.security_patch|ro.board.platform'
-```
-
-**Never post** your IMEI, serial number or `nvram`/`nvdata` dumps.
-
-## License
-
-Scripts and docs: MIT. See [LICENSE](LICENSE).
+<sub>MIT licensed · Not affiliated with Samsung or LineageOS · Never post your IMEI, serial number or `nvram` dumps in issues.</sub>

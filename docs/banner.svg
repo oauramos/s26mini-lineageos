@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-label="S26 Mini · LineageOS: remove the factory backdoor in a few clicks">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1320"/>
+      <stop offset="1" stop-color="#10333a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2fd6b5"/>
+      <stop offset="1" stop-color="#6ee7ff"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b8f86"/>
+      <stop offset="1" stop-color="#0f4f5c"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="400" fill="url(#bg)"/>
+  <g stroke="#ffffff" stroke-opacity="0.04">
+    <path d="M0 80H1280M0 160H1280M0 240H1280M0 320H1280M160 0V400M320 0V400M480 0V400M640 0V400M800 0V400M960 0V400M1120 0V400"/>
+  </g>
+
+  <!-- phone -->
+  <g transform="translate(930 48)">
+    <rect x="0" y="0" width="170" height="304" rx="26" fill="#05090f" stroke="#2b3a4a" stroke-width="3"/>
+    <rect x="10" y="12" width="150" height="280" rx="18" fill="url(#screen)"/>
+    <path d="M65 12 H105 V28 C105 33 101 36 96 36 H74 C69 36 65 33 65 28 Z" fill="#05090f"/>
+    <circle cx="85" cy="23" r="7" fill="#0d1a26" stroke="#27405a" stroke-width="2"/>
+    <!-- shield with check -->
+    <g transform="translate(85 160)">
+      <path d="M0 -62 L50 -44 V-4 C50 30 28 52 0 64 C-28 52 -50 30 -50 -4 V-44 Z" fill="#0b1320" fill-opacity="0.55" stroke="url(#accent)" stroke-width="5"/>
+      <path d="M-22 0 L-6 16 L24 -16" fill="none" stroke="url(#accent)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <rect x="30" y="252" width="110" height="10" rx="5" fill="#ffffff" fill-opacity="0.25"/>
+  </g>
+
+  <!-- text -->
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+    <text x="80" y="118" fill="url(#accent)" font-size="22" font-weight="700" letter-spacing="4">FAKE "S26 ULTRA MINI" · MT6739</text>
+    <text x="78" y="196" fill="#ffffff" font-size="68" font-weight="800">S26 Mini · LineageOS</text>
+    <text x="80" y="250" fill="#c9d6e3" font-size="28">Remove the factory backdoor. One program, a few clicks.</text>
+    <g font-size="20" font-weight="600">
+      <rect x="80" y="292" width="148" height="40" rx="20" fill="#ffffff" fill-opacity="0.08"/>
+      <text x="154" y="319" fill="#e6f2f7" text-anchor="middle">Android 14</text>
+      <rect x="240" y="292" width="222" height="40" rx="20" fill="#ffffff" fill-opacity="0.08"/>
+      <text x="351" y="319" fill="#e6f2f7" text-anchor="middle">Patch 2026-09-01</text>
+      <rect x="474" y="292" width="284" height="40" rx="20" fill="#ffffff" fill-opacity="0.08"/>
+      <text x="616" y="319" fill="#e6f2f7" text-anchor="middle">macOS · Windows · Linux</text>
+    </g>
+  </g>
+</svg>
