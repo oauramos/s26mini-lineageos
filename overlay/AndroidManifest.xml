@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Static framework overlay for the fake "S26 ULTRA Mini": declares the front camera as a display cutout.
+     Installed to /vendor/overlay, which survives GSI reinstalls. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.github.oauramos.s26mini.cutout">
+    <overlay
+        android:targetPackage="android"
+        android:isStatic="true"
+        android:priority="100" />
+</manifest>

@@ -37,19 +37,27 @@ state="$(adb shell dumpsys bluetooth_manager | grep -m1 -E '^\s*state:' | awk '{
 echo "Bluetooth state: ${state:-unknown}"
 
 # Front camera: the lens sits inside the panel, ~7.2 mm from the top, and hides content.
-# Declare it as a display cutout (60x72 px notch, x=0 is the screen centre) so the status bar
-# grows around it and apps start below it. Fabricated overlays live in /data and survive reboots.
-CUTOUT='M -30,0 H 30 V 62 C 30,68 26,72 20,72 H -20 C -26,72 -30,68 -30,62 Z'
+# A static overlay (overlay/ in this repo, 60x72 px notch) declares it as a display cutout so the
+# status bar grows around it and apps start below it. It goes into /system, which only the
+# "vndklite" images let you write; runtime (fabricated) overlays are lost on every reboot.
+HERE="$(cd "$(dirname "$0")/.." && pwd)"
 adb shell cmd overlay disable com.android.internal.display.cutout.emulation.tall >/dev/null 2>&1 || true
-adb shell cmd overlay fabricate --target android --name FrontCameraCutout \
-  android:string/config_mainBuiltInDisplayCutout 0x03 "'$CUTOUT'"
-adb shell cmd overlay fabricate --target android --name FrontCameraCutoutRect \
-  android:string/config_mainBuiltInDisplayCutoutRectApproximation 0x03 "'$CUTOUT'"
-adb shell cmd overlay fabricate --target android --name FrontCameraCutoutFill \
-  android:bool/config_fillMainBuiltInDisplayCutout 0x12 0xffffffff
-for n in FrontCameraCutout FrontCameraCutoutRect FrontCameraCutoutFill; do
-  adb shell cmd overlay enable "com.android.shell:$n"
-done
-adb shell pkill -f com.android.systemui || true
-echo "Front camera cutout applied."
+if adb shell "mount -o rw,remount / && echo ok" | grep -q ok; then
+  # The image has ~1 MB free, less than ext4's runtime metadata reserve (up to 16 MB), so plain
+  # writes fail with ENOSPC. Lift the reserve for this one small file, then put it back.
+  RESV="/sys/fs/ext4/\$(basename \$(mount | grep ' / ' | cut -d' ' -f1))/reserved_clusters"
+  OLD_RESV="$(adb shell "cat $RESV" | tr -d '\r')"
+  adb shell "echo 0 > $RESV"
+  adb push "$HERE/installer/S26miniCutout.apk" /system/product/overlay/S26miniCutout.apk >/dev/null
+  adb shell "chmod 644 /system/product/overlay/S26miniCutout.apk && restorecon /system/product/overlay/S26miniCutout.apk; echo $OLD_RESV > $RESV; sync; mount -o ro,remount /"
+  echo "Front camera cutout installed. Rebooting to turn it on."
+  adb reboot
+  adb wait-for-device
+  until [[ "$(adb shell getprop sys.boot_completed | tr -d '\r')" == "1" ]]; do sleep 2; done
+  sleep 10
+  adb shell cmd overlay list android | grep -q '\[x\] io.github.oauramos.s26mini.cutout' \
+    && echo "Front camera cutout active." || echo "WARNING: the cutout overlay is not active."
+else
+  echo "WARNING: /system is read-only (use a *-vndklite* image). The front camera area stays unprotected."
+fi
 echo "Done. Remember to turn USB debugging off."

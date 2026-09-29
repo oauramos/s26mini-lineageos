@@ -41,20 +41,21 @@ func sourceforge(file string) []string {
 	}
 }
 
-// LineageOS 21 GSIs by AndyYan, build 20260918 (security patch 2026-09-01).
-// MD5s match SourceForge's published ones; both images were flashed and tested on the device.
+// LineageOS 21 GSIs by AndyYan, build 20260918 (security patch 2026-09-01), "vndklite" variants:
+// their ext4 has no shared_blocks, so /system can be remounted read-write for the camera
+// overlay. MD5s match SourceForge's published ones; tested on the device.
 var (
 	imageNoGoogle = download{
-		Name:   "lineage-21.0-20260918-UNOFFICIAL-arm64_bvN.img.gz",
-		URLs:   sourceforge("lineage-21.0-20260918-UNOFFICIAL-arm64_bvN.img.gz"),
-		SHA256: "7e77b4096ecfb4ec0cec7118b49a5449454cb3cd57725e811f8640163bbb23cb",
-		Size:   1154313641,
+		Name:   "lineage-21.0-20260918-UNOFFICIAL-arm64_bvN-vndklite.img.gz",
+		URLs:   sourceforge("lineage-21.0-20260918-UNOFFICIAL-arm64_bvN-vndklite.img.gz"),
+		SHA256: "4444245ac00c480c819d997f204c2603c8b94fd298e40bfc3fecf3808d2c0579",
+		Size:   1143986059,
 	}
 	imageGoogle = download{
-		Name:   "lineage-21.0-20260918-UNOFFICIAL-arm64_bgN-signed.img.gz",
-		URLs:   sourceforge("lineage-21.0-20260918-UNOFFICIAL-arm64_bgN-signed.img.gz"),
-		SHA256: "358c8c68d5d349c83b12695635761906706b557b4f37db4022347d8b55dc65d9",
-		Size:   1436827581,
+		Name:   "lineage-21.0-20260918-UNOFFICIAL-arm64_bgN-vndklite-signed.img.gz",
+		URLs:   sourceforge("lineage-21.0-20260918-UNOFFICIAL-arm64_bgN-vndklite-signed.img.gz"),
+		SHA256: "7baba0781c7733a8879c2eb7cbf34704056d3e4f9c7a0c185867733eec483885",
+		Size:   1417963524,
 	}
 )
 

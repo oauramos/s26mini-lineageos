@@ -116,10 +116,32 @@ func main() {
 	}
 	deviceFixes()
 	backupDir := backupCalibration()
+	if installCutoutOverlay() {
+		// The overlay is read at boot; the reboot also proves the Bluetooth fix sticks.
+		say(t("Reiniciando para ativar a proteção da câmera...", "Rebooting to turn on the camera protection..."))
+		adb("reboot")
+		time.Sleep(15 * time.Second)
+		if !waitWithDots(t("Esperando o celular voltar", "Waiting for the phone to come back"), 5*time.Minute, 5*time.Second, bootCompleted) {
+			die(t("O celular não voltou do reboot.", "The phone did not come back from the reboot."))
+		}
+		time.Sleep(10 * time.Second)
+		if cutoutActive() {
+			ok(t("Área da câmera frontal protegida", "Front camera area reserved"))
+		} else {
+			warn(t("A proteção da câmera não ativou.", "The camera protection did not turn on."))
+		}
+		if prop("persist.sys.bt.unsupported.commands") == "182" {
+			ok(t("Correção do Bluetooth mantida após reiniciar", "Bluetooth fix kept after reboot"))
+		} else {
+			warn(t("A correção do Bluetooth não sobreviveu ao reboot.", "The Bluetooth fix did not survive the reboot."))
+		}
+	} else {
+		warn(t("Não consegui gravar em /system (imagem não \"vndklite\"?): a área da câmera fica sem proteção.",
+			"Could not write to /system (not a \"vndklite\" image?): the camera area stays unprotected."))
+	}
 
 	// 7. Apps and finish
 	step(t("Apps e finalização", "Apps and finishing"))
-	waitWithDots(t("Esperando o sistema reiniciar a interface", "Waiting for the system UI to restart"), time.Minute, 2*time.Second, bootCompleted)
 	if len(apps) > 0 {
 		installApps(apps)
 		if bundle {

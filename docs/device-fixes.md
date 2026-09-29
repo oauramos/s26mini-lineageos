@@ -6,8 +6,9 @@ Status of hardware on replacement GSIs, and the tweaks that fix it. Apply the fi
 
 | GSI | Android | Security patch | Boots | Notes |
 |---|---|---|---|---|
-| **LineageOS 21 td `20260918`** (AndyYan, `arm64_bvN`) | 14 | **2026-09-01** | ✅ | recommended; installed with `scripts/flash-gsi.sh` |
-| LineageOS 21 td `20260918` (AndyYan, `arm64_bgN-signed`, GApps) | 14 | 2026-09-01 | ✅ | userdebug (`adb root` works), 3.2 GB image fits `super`; `post-install.sh` fixes apply unchanged |
+| **LineageOS 21 td `20260918`** (AndyYan, `arm64_bvN-vndklite`) | 14 | **2026-09-01** | ✅ | recommended: writable `/system` (camera overlay); used by the installer |
+| LineageOS 21 td `20260918` (AndyYan, `arm64_bgN-vndklite-signed`, GApps) | 14 | 2026-09-01 | ✅ | with Google Play; userdebug, ADB on at first boot, no `shared_blocks` |
+| LineageOS 21 td `20260918` (AndyYan, `arm64_bvN` / `arm64_bgN-signed`) | 14 | 2026-09-01 | ✅ | boot fine, but read-only `/system` (`shared_blocks`): no camera overlay |
 | TrebleDroid `ci-20240226` (vanilla `arm64-ab`) | 14 | 2024-02-05 | ✅ | heavy load for the first minutes, one spontaneous reboot seen |
 | TrebleDroid `ci-20230905` | 13 | 2023 | ⏳ | untested fallback |
 
@@ -64,13 +65,20 @@ A real fix needs a Bluetooth stack patch (Android 14 GD/legacy ACL bookkeeping w
 
 The selfie camera sits inside the panel, ~7.2 mm (~71 px) from the top, and hides whatever is drawn behind it. The GSI doesn't know it's there, so the status bar is too short and apps draw under the lens.
 
-`scripts/post-install.sh` declares it as a display cutout with three fabricated overlays on `android` (`cmd overlay fabricate`, needs `adb root`): a 60×72 px rounded notch, centred. The status bar grows to 72 px with the clock and icons on either side, apps start below it, and the notch is filled black. The size was tuned on the device a few pixels at a time.
+The fix is a tiny static overlay, [`overlay/`](../overlay/) (built by `overlay/build.sh` into `installer/S26miniCutout.apk`), that declares a **60×72 px** rounded notch, centred (in the cutout path `x=0` is the screen centre). The status bar grows to 72 px with the clock and icons on either side, apps start below it, and the notch is filled black. The size was tuned on the device a few pixels at a time.
 
-Undo: `adb shell cmd overlay disable com.android.shell:FrontCameraCutout` (same for `FrontCameraCutoutRect` and `FrontCameraCutoutFill`), then `adb shell pkill -f com.android.systemui`.
+`scripts/post-install.sh` and the installer copy it to `/system/product/overlay/` and reboot. Two things make that possible:
+
+- **Use the `-vndklite` images.** The regular `bvN`/`bgN-signed` images are ext4 with `shared_blocks` (ro_compat `0x4000`), which the kernel only mounts read-only, so `/system` can't be written at all (`adb remount` falls back to a temporary overlay that is gone after a reboot). The `vndklite` variants are plain ext4.
+- **ext4 keeps a runtime metadata reserve** (`/sys/fs/ext4/dm-0/reserved_clusters`, 4096 clusters = 16 MB) and the image has only ~1–2 MB free, so any write fails with `ENOSPC`. The scripts set it to 0 for the copy and put it back.
+
+Runtime overlays (`cmd overlay fabricate`) look like they work but are **dropped on every reboot** on these GSIs. `/vendor/overlay` would survive reinstalls, but the stock vendor is full.
+
+Undo: `adb root`, `adb shell "mount -o rw,remount / && rm /system/product/overlay/S26miniCutout.apk"`, reboot.
 
 ### Google apps
 
-Vanilla (`bvN`) builds have no Google Play Services, so Google Maps and other Google apps won't run. Use F-Droid apps (Organic Maps, OsmAnd), Aurora Store (`install-apps.sh --aurora`), or flash the `bgN-signed` (GApps) variant. The `bgN` image is a userdebug build like `bvN`: `adb root`, the Bluetooth fix and the camera cutout all work. The Play Store needs the device registered at google.com/android/uncertified first. See the README's Google Play section.
+Vanilla (`bvN`) builds have no Google Play Services, so Google Maps and other Google apps won't run. Use F-Droid apps (Organic Maps, OsmAnd), Aurora Store (`install-apps.sh --aurora`), or flash the `bgN-vndklite-signed` (GApps) variant. It is a userdebug build like `bvN`: `adb root`, the Bluetooth fix and the camera cutout all work. The Play Store needs the device registered at google.com/android/uncertified first. See the README's Google Play section.
 
 microG is not an option on these builds: they don't have signature spoofing (`android.permission.FAKE_PACKAGE_SIGNATURE`).
 

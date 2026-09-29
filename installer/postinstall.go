@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"os"
 	"path/filepath"
 	"strings"
@@ -36,19 +37,48 @@ func deviceFixes() {
 	time.Sleep(2 * time.Second)
 	shell("cmd bluetooth_manager enable")
 	ok(t("Bluetooth corrigido", "Bluetooth fixed"))
+}
 
-	// Front camera: the lens sits ~7.2 mm into the panel. Declare it as a 60x72 px cutout
-	// (x=0 is the screen centre) so the status bar grows around it and apps start below it.
-	const cutout = "M -30,0 H 30 V 62 C 30,68 26,72 20,72 H -20 C -26,72 -30,68 -30,62 Z"
-	shell("cmd overlay disable com.android.internal.display.cutout.emulation.tall")
-	shell("cmd overlay fabricate --target android --name FrontCameraCutout android:string/config_mainBuiltInDisplayCutout 0x03 '" + cutout + "'")
-	shell("cmd overlay fabricate --target android --name FrontCameraCutoutRect android:string/config_mainBuiltInDisplayCutoutRectApproximation 0x03 '" + cutout + "'")
-	shell("cmd overlay fabricate --target android --name FrontCameraCutoutFill android:bool/config_fillMainBuiltInDisplayCutout 0x12 0xffffffff")
-	for _, n := range []string{"FrontCameraCutout", "FrontCameraCutoutRect", "FrontCameraCutoutFill"} {
-		shell("cmd overlay enable com.android.shell:" + n)
+//go:embed S26miniCutout.apk
+var cutoutOverlay []byte // built from overlay/ by overlay/build.sh
+
+const (
+	cutoutPkg     = "io.github.oauramos.s26mini.cutout"
+	cutoutOnPhone = "/system/product/overlay/S26miniCutout.apk"
+)
+
+// installCutoutOverlay puts the static camera-cutout overlay into /system. The front lens sits
+// ~7.2 mm into the panel; the overlay declares a 60x72 px notch so the status bar grows around
+// it and apps start below it. Runtime (fabricated) overlays don't survive a reboot on these
+// GSIs, hence a real overlay APK, which needs the writable "vndklite" images.
+// Returns false if /system can't be written. Takes effect after a reboot.
+func installCutoutOverlay() bool {
+	local := filepath.Join(cacheDir, "S26miniCutout.apk")
+	if err := os.WriteFile(local, cutoutOverlay, 0o644); err != nil {
+		return false
 	}
-	shell("pkill -f com.android.systemui")
-	ok(t("Área da câmera frontal protegida", "Front camera area reserved"))
+	if shell("mount -o rw,remount / && echo yes") != "yes" {
+		return false
+	}
+	// The image has ~1 MB free, less than ext4's runtime reserve for metadata (up to 16 MB),
+	// so plain writes fail with ENOSPC. Lift the reserve for this one small file.
+	resv := "/sys/fs/ext4/$(basename $(mount | grep ' / ' | cut -d' ' -f1))/reserved_clusters"
+	old := shell("cat " + resv)
+	shell("echo 0 > " + resv)
+	defer shell("echo " + old + " > " + resv + "; sync; mount -o ro,remount /")
+	if out, err := adb("push", local, cutoutOnPhone); err != nil {
+		warn("%s", lastLine(out))
+		return false
+	}
+	shell("chmod 644 " + cutoutOnPhone + " && restorecon " + cutoutOnPhone)
+	shell("cmd overlay disable com.android.internal.display.cutout.emulation.tall")
+	return true
+}
+
+// cutoutActive reports whether the phone currently reserves the 72 px camera area.
+func cutoutActive() bool {
+	return strings.Contains(shell("cmd overlay list android"), "[x] "+cutoutPkg) &&
+		strings.Contains(shell("dumpsys window"), "type=statusBars frame=[0,0][384,72]")
 }
 
 // backupCalibration saves the preloader and the IMEI/RF calibration partitions to the computer.
