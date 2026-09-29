@@ -59,6 +59,14 @@ Root cause (from HCI snoop + logcat, LineageOS 21 td):
 
 A real fix needs a Bluetooth stack patch (Android 14 GD/legacy ACL bookkeeping with this MediaTek controller).
 
+### Front camera covers the top of the screen
+
+The selfie camera sits inside the panel, ~7.2 mm (~71 px) from the top, and hides whatever is drawn behind it. The GSI doesn't know it's there, so the status bar is too short and apps draw under the lens.
+
+`scripts/post-install.sh` declares it as a display cutout with three fabricated overlays on `android` (`cmd overlay fabricate`, needs `adb root`): a 60×72 px rounded notch, centred. The status bar grows to 72 px with the clock and icons on either side, apps start below it, and the notch is filled black. The size was tuned on the device a few pixels at a time.
+
+Undo: `adb shell cmd overlay disable com.android.shell:FrontCameraCutout` (same for `FrontCameraCutoutRect` and `FrontCameraCutoutFill`), then `adb shell pkill -f com.android.systemui`.
+
 ### Google apps
 
 Vanilla (`bvN`) builds have no Google Play Services, so Google Maps and other Google apps won't run. Use F-Droid apps (Organic Maps, OsmAnd), or flash the `bgN` (GApps) variant if you need them.
