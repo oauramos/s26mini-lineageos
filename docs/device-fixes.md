@@ -7,6 +7,7 @@ Status of hardware on replacement GSIs, and the tweaks that fix it. Apply the fi
 | GSI | Android | Security patch | Boots | Notes |
 |---|---|---|---|---|
 | **LineageOS 21 td `20260918`** (AndyYan, `arm64_bvN`) | 14 | **2026-09-01** | ✅ | recommended; installed with `scripts/flash-gsi.sh` |
+| LineageOS 21 td `20260918` (AndyYan, `arm64_bgN-signed`, GApps) | 14 | 2026-09-01 | ✅ | userdebug (`adb root` works), 3.2 GB image fits `super`; `post-install.sh` fixes apply unchanged |
 | TrebleDroid `ci-20240226` (vanilla `arm64-ab`) | 14 | 2024-02-05 | ✅ | heavy load for the first minutes, one spontaneous reboot seen |
 | TrebleDroid `ci-20230905` | 13 | 2023 | ⏳ | untested fallback |
 
@@ -69,7 +70,9 @@ Undo: `adb shell cmd overlay disable com.android.shell:FrontCameraCutout` (same 
 
 ### Google apps
 
-Vanilla (`bvN`) builds have no Google Play Services, so Google Maps and other Google apps won't run. Use F-Droid apps (Organic Maps, OsmAnd), or flash the `bgN` (GApps) variant if you need them.
+Vanilla (`bvN`) builds have no Google Play Services, so Google Maps and other Google apps won't run. Use F-Droid apps (Organic Maps, OsmAnd), Aurora Store (`install-apps.sh --aurora`), or flash the `bgN-signed` (GApps) variant. The `bgN` image is a userdebug build like `bvN`: `adb root`, the Bluetooth fix and the camera cutout all work. The Play Store needs the device registered at google.com/android/uncertified first. See the README's Google Play section.
+
+microG is not an option on these builds: they don't have signature spoofing (`android.permission.FAKE_PACKAGE_SIGNATURE`).
 
 ## Optimisation (optional)
 

@@ -2,7 +2,7 @@
 # "Termux edition": a lean LineageOS for using the phone as an SSH/terminal device.
 # Disables apps not needed for that (all reversible with `adb shell pm enable <pkg>`),
 # applies the optimisations and installs the app bundle.
-# Run after flash-gsi.sh and post-install.sh.
+# Run after flash-gsi.sh and post-install.sh. Extra options (e.g. --aurora) go to install-apps.sh.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 
@@ -20,7 +20,7 @@ DISABLE=(
 )
 
 "$HERE/optimize.sh" --disable-apps "${DISABLE[*]}"
-"$HERE/install-apps.sh" --termux-extras
+"$HERE/install-apps.sh" --termux-extras "$@"   # forwards e.g. --aurora
 
 # Firefox (Fennec F-Droid) becomes the default browser
 adb shell cmd role add-role-holder --user 0 android.app.role.BROWSER org.mozilla.fennec_fdroid

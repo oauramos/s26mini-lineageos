@@ -7,8 +7,11 @@
 #   Fennec F-Droid (Firefox built from Mozilla's source by F-Droid, arm64)
 #   Primitive FTPd (FTP/SFTP server, to reach the phone's files from a computer)
 # --with-browser is kept as an alias of --termux-extras.
+# --aurora (either edition) also installs:
+#   Aurora Store (anonymous Play Store client: apps not on F-Droid, no Google account;
+#   apps that need Play Services won't fully work)
 #
-# Usage: scripts/install-apps.sh [--termux-extras]
+# Usage: scripts/install-apps.sh [--termux-extras] [--aurora]
 set -euo pipefail
 
 CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/s26mini-lineageos/apks"
@@ -21,12 +24,20 @@ APPS=(
   "org.localsend.localsend_app_643.apk      82ec3568fba2aa5295b9aae8b76f701d7a4703d86b9f8bad749472038fbaeab3"
   "me.zhanghai.android.files_40.apk         2fe900bf43d725b655008d438f5ca46d0da0f301e3784403b5b96c3fc2df6e8a"
 )
-if [[ "${1:-}" == "--termux-extras" || "${1:-}" == "--with-browser" ]]; then
-  APPS+=(
-    "org.mozilla.fennec_fdroid_1560020.apk    27f2951376ca1085e0933066c902fdfe4d260916d381e233475c5fd6964f5745"
-    "org.primftpd_71.apk                      d36566e774e2d0446dcbb41438d22e62d198688aac2711ba7afaa6ea2fdd577d"
-  )
-fi
+for arg in "$@"; do
+  case "$arg" in
+    --termux-extras|--with-browser)
+      APPS+=(
+        "org.mozilla.fennec_fdroid_1560020.apk    27f2951376ca1085e0933066c902fdfe4d260916d381e233475c5fd6964f5745"
+        "org.primftpd_71.apk                      d36566e774e2d0446dcbb41438d22e62d198688aac2711ba7afaa6ea2fdd577d"
+      ) ;;
+    --aurora)
+      APPS+=(
+        "com.aurora.store_76.apk                  fd9c75d90d0f4a7c132b9b4a5a2cf1992a45e03b8d8ff988b7dcfbc0db2c4d11"
+      ) ;;
+    *) echo "Unknown option: $arg"; exit 1 ;;
+  esac
+done
 
 sha256() { if command -v sha256sum >/dev/null; then sha256sum "$1" | cut -d' ' -f1; else shasum -a 256 "$1" | cut -d' ' -f1; fi; }
 

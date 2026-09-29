@@ -64,6 +64,7 @@ It should print `d39g_4m_bml_s26ultra_mini_pt`. Other boards sold under the same
 - A **USB-A → USB-C** cable. **USB-C ↔ USB-C doesn't work** on this phone, for data or charging (the board lacks the Type-C CC resistors). On USB-C-only computers, use a single C-to-A adapter, not a hub.
 - A GSI image, **arm64, A/B (system-as-root), vanilla**:
   - **Recommended:** LineageOS 21 by AndyYan, file `...-arm64_bvN.img.gz`: <https://sourceforge.net/projects/andyyan-gsi/files/lineage-21-pre-qpr2-td/> (slow download? add `?use_mirror=cfhcable` to the URL)
+    - Want Google Play? Take `...-arm64_bgN-signed.img.gz` from the same folder instead. See [Google Play (optional)](#google-play-optional).
   - Alternative: TrebleDroid `system-td-arm64-ab-vanilla.img.xz`: <https://github.com/TrebleDroid/treble_experimentations/releases> (`ci-20240226` = Android 14, `ci-20230905` = Android 13)
   - Avoid EROFS builds and GSIs that require Android 11+ vendors. This phone has an Android 10 vendor (VNDK 29) and kernel 4.14.
 
@@ -107,7 +108,24 @@ After the first boot, enable USB debugging again and run `scripts/post-install.s
 
 **Primitive FTPd** is the other direction: an SFTP/FTP server so a computer can reach the phone's files. **Fennec F-Droid** is Firefox built from Mozilla's source by F-Droid, without telemetry. Third-party builds can't use the "Firefox" name.
 
-Disabled apps aren't removed: `adb shell pm enable <package>` brings any of them back. There are no Google services, so Google apps (Maps, Play Store...) won't work.
+Disabled apps aren't removed: `adb shell pm enable <package>` brings any of them back.
+
+### Google Play (optional)
+
+The recommended image has no Google services. If you need apps from the Play Store, there are two ways, and both work with either edition:
+
+| | **Aurora Store** | **Google image (`bgN`)** |
+|---|---|---|
+| How | add `--aurora` to `install-apps.sh` or `profile-termux.sh` | flash `...-arm64_bgN-signed.img` instead of `bvN` (wipes the phone) |
+| What you get | anonymous Play Store client from F-Droid, APK pinned by SHA-256 | the real Play Store and Play Services |
+| Google account | not needed | needed |
+| Apps that rely on Play Services (push notifications, Google sign-in, Maps) | limited | work |
+| Banking, streaming DRM (Play Integrity) | no | no, this GSI isn't certified |
+| RAM | unchanged | Play Services stays resident; ~1.4 GB available after setup (tested) |
+
+Aurora covers most "I need app X that isn't on F-Droid" cases. Pick the Google image only if you need Play Services.
+
+With the Google image, Google blocks the Play Store on uncertified devices until you register the phone. Get its GSF ID (`adb root`, then `adb shell "sqlite3 /data/data/com.google.android.gsf/databases/gservices.db \"select value from main where name='android_id';\""`), register it at <https://www.google.com/android/uncertified>, wait a few minutes and clear the Play Store's data. Remember the [security model](#what-stays-untrusted): use a secondary Google account, not your main one.
 
 Full app list with versions and hashes: [Editions and Apps](https://github.com/oauramos/s26mini-lineageos/wiki/Editions-and-Apps).
 

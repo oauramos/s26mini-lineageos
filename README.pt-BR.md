@@ -62,6 +62,7 @@ Tem que aparecer `d39g_4m_bml_s26ultra_mini_pt`. Outros aparelhos vendidos com o
 - Cabo **USB-A → USB-C**. **USB-C ↔ USB-C não funciona** nesse celular, nem pra dados nem pra carregar (faltam os resistores CC do USB-C na placa). Em computador só com USB-C, use **um** adaptador C→A, sem hub.
 - Uma imagem GSI **arm64, A/B, vanilla**:
   - **Recomendada:** LineageOS 21 (AndyYan), arquivo `...-arm64_bvN.img.gz`: <https://sourceforge.net/projects/andyyan-gsi/files/lineage-21-pre-qpr2-td/> (download lento? acrescente `?use_mirror=cfhcable` no link)
+    - Quer a Google Play? Baixe o `...-arm64_bgN-signed.img.gz` da mesma pasta. Veja [Google Play (opcional)](#google-play-opcional).
   - Alternativa: TrebleDroid `system-td-arm64-ab-vanilla.img.xz`: <https://github.com/TrebleDroid/treble_experimentations/releases>
 
 ## Instalação
@@ -102,7 +103,24 @@ Depois do primeiro boot, ative a depuração USB de novo, rode `scripts/post-ins
 
 O **Primitive FTPd** faz o caminho contrário: é um servidor SFTP/FTP pro computador acessar os arquivos do celular. O **Fennec F-Droid** é o Firefox compilado do código-fonte da Mozilla pelo próprio F-Droid, sem telemetria. Builds de terceiros não podem usar o nome "Firefox".
 
-Os apps desativados não são apagados: `adb shell pm enable <pacote>` reativa qualquer um. Não há serviços do Google, então apps do Google (Maps, Play Store...) não funcionam.
+Os apps desativados não são apagados: `adb shell pm enable <pacote>` reativa qualquer um.
+
+### Google Play (opcional)
+
+A imagem recomendada não tem serviços do Google. Se você precisa de apps da Play Store, há dois caminhos, e os dois funcionam com qualquer versão:
+
+| | **Aurora Store** | **Imagem Google (`bgN`)** |
+|---|---|---|
+| Como | acrescente `--aurora` ao `install-apps.sh` ou ao `profile-termux.sh` | instale o `...-arm64_bgN-signed.img` no lugar do `bvN` (apaga o celular) |
+| O que vem | cliente anônimo da Play Store, do F-Droid, APK conferido por SHA-256 | a Play Store e o Play Services de verdade |
+| Conta Google | não precisa | precisa |
+| Apps que dependem do Play Services (notificação push, login com Google, Maps) | limitados | funcionam |
+| Banco, streaming com DRM (Play Integrity) | não | não, esta GSI não é certificada |
+| RAM | não muda | o Play Services fica residente; ~1,4 GB disponível após a configuração (testado) |
+
+A Aurora resolve a maioria dos casos de "preciso do app X que não está no F-Droid". Escolha a imagem Google só se precisar do Play Services.
+
+Na imagem Google, o Google bloqueia a Play Store em aparelhos não certificados até você registrar o celular. Pegue o GSF ID (`adb root`, depois `adb shell "sqlite3 /data/data/com.google.android.gsf/databases/gservices.db \"select value from main where name='android_id';\""`), registre em <https://www.google.com/android/uncertified>, espere alguns minutos e limpe os dados da Play Store. Lembre do [modelo de segurança](#o-que-continua-não-confiável): use uma conta Google secundária, não a principal.
 
 ## O que funciona
 
