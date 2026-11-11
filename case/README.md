@@ -30,7 +30,7 @@ The case is generated in Python (comments and labels are in Portuguese). All mea
 |---|---|
 | [`s26case.py`](s26case.py) | Builds two versions: **v8** (tray + bezel, the STLs above) and **v9** (a slide-on version with a dovetail rail, not tested) |
 | [`desenho_tecnico.py`](desenho_tecnico.py) | Draws the technical sheets (views, sections and a legend with a code for each dimension) as PDF and PNG |
-| [`s26-mini-case_v9_desenho-tecnico.pdf`](s26-mini-case_v9_desenho-tecnico.pdf) | Technical drawing of v9 |
+| [`s26-mini-case_v8_desenho-tecnico.pdf`](s26-mini-case_v8_desenho-tecnico.pdf) | Technical drawing of v8 (the printed case) |
 
 Tested with Python 3.12 (`manifold3d` has no wheel for Python 3.15 yet).
 
