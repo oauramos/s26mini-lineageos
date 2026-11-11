@@ -21,3 +21,23 @@ Both files are already oriented for printing (the bezel lies face down). Print t
 ## Fitting
 
 Put the phone in the tray, then press the bezel down all the way around until it sits flat on the walls. The fit is tight on purpose: 0.05 mm per side between the stem and the channel.
+
+## Source
+
+The case is generated in Python (comments and labels are in Portuguese). All measurements are constants at the top of `s26case.py`.
+
+| File | What it does |
+|---|---|
+| [`s26case.py`](s26case.py) | Builds two versions: **v8** (tray + bezel, the STLs above) and **v9** (a slide-on version with a dovetail rail, not tested) |
+| [`desenho_tecnico.py`](desenho_tecnico.py) | Draws the technical sheets (views, sections and a legend with a code for each dimension) as PDF and PNG |
+| [`s26-mini-case_v9_desenho-tecnico.pdf`](s26-mini-case_v9_desenho-tecnico.pdf) | Technical drawing of v9 |
+
+Tested with Python 3.12 (`manifold3d` has no wheel for Python 3.15 yet).
+
+```sh
+python3.12 -m venv venv
+./venv/bin/pip install trimesh manifold3d numpy scipy networkx shapely matplotlib
+cd case
+../venv/bin/python s26case.py .      # writes the v8 and v9 STLs here
+../venv/bin/python desenho_tecnico.py
+```

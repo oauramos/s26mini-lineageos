@@ -5,3 +5,4 @@
 nv*.img
 proinfo*
 .DS_Store
+__pycache__/
