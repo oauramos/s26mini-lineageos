@@ -66,6 +66,6 @@ Every choice also gets the device fixes (Bluetooth, front-camera area) and an au
 
 Manual install with scripts, the Termux edition, hardware details, recovery from a brick: everything is in the **[wiki](https://github.com/oauramos/s26mini-lineageos/wiki)**.
 
-[Installation Guide](https://github.com/oauramos/s26mini-lineageos/wiki/Installation-Guide) · [Editions and Apps](https://github.com/oauramos/s26mini-lineageos/wiki/Editions-and-Apps) · [Known Issues](https://github.com/oauramos/s26mini-lineageos/wiki/Device-Fixes-and-Known-Issues) · [Recovery](https://github.com/oauramos/s26mini-lineageos/wiki/Recovery-and-Backups) · [Security Model](https://github.com/oauramos/s26mini-lineageos/wiki/Security-Model) · [FAQ](https://github.com/oauramos/s26mini-lineageos/wiki/FAQ)
+[Installation Guide](https://github.com/oauramos/s26mini-lineageos/wiki/Installation-Guide) · [Editions and Apps](https://github.com/oauramos/s26mini-lineageos/wiki/Editions-and-Apps) · [Known Issues](https://github.com/oauramos/s26mini-lineageos/wiki/Device-Fixes-and-Known-Issues) · [Recovery](https://github.com/oauramos/s26mini-lineageos/wiki/Recovery-and-Backups) · [Security Model](https://github.com/oauramos/s26mini-lineageos/wiki/Security-Model) · [FAQ](https://github.com/oauramos/s26mini-lineageos/wiki/FAQ) · [3D-printed case](case/)
 
 <sub>MIT licensed · Not affiliated with Samsung or LineageOS · Never post your IMEI, serial number or `nvram` dumps in issues.</sub>
